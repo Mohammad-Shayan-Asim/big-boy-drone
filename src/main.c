@@ -1,16 +1,17 @@
-
-//main.c
-//Toggles the Red LED of TM4C Launchpad when SW1(PF4) is pushed and held
-//PF4 is negative logic,i.e 0 is on and non-zero is off
 #include "stdint.h"
 #include "tm4c123gh6pm.h"
+#include "uart.h"
+#include "i2c.h"
+#include "stdio.h"
+#include "mpu6500.h"
+#include "delay.h"
+#include "stdio.h"
 
 #define PORT_F 0x20
 
 unsigned long Led;
 
 void PortF_Init() {
-
   SYSCTL_RCGCGPIO_R |= PORT_F;
   while(~SYSCTL_PRGPIO_R & PORT_F){};
 
@@ -18,44 +19,66 @@ void PortF_Init() {
   GPIO_PORTF_DIR_R |= 0xE;
 };
 
-void Delay(void){unsigned long volatile time;
-  time = 800000;
-  while(time){
-		time--;
-  }
-}
-
-
 int main(void){
   PortF_Init();
+  // UART0_Init();
+  
+  // if (I2C_Init() < 0) {
+  //   UART0_Print("I2C initialization failed!\r\n");
+  //   return -1;
+  // }
 
-  while(1){
-   //if(PF4 == 0x0){
-    Led = 0x02;            // reverse value of LED
-    GPIO_PORTF_DATA_R = Led;    // write value to PORTF DATA register,toggle led
-    Delay();
-    Led = 0x04;            // reverse value of LED
-    GPIO_PORTF_DATA_R = Led;   // write value to PORTF DATA register,toggle led
-    Delay();
-    Led = 0x08;            // reverse value of LED
-    GPIO_PORTF_DATA_R = Led;   // write value to PORTF DATA register,toggle led
-    Delay();
-    /*Led = 0x0A;            // reverse value of LED
-    GPIO_PORTF_DATA_R = Led;   // write value to PORTF DATA register,toggle led
-    Delay();*/
-   // }
-   break;
+  // if (MPU6500_Init() < 0) {
+  //   UART0_Print("MPU6500 initialization failed!\r\n");
+  //   return -1;
+  // }
+
+  // UART0_Print("initialization successful!\r\n");
+
+  // while(1){
+  //   uint16_t d[7];
+  //   if (MPU6500_Read((uint8_t*)d) < 0) {
+  //     UART0_Print("MPU6500 read failed!\r\n");
+  //     return -1;
+  //   }
+    
+
+  //   for(int i=0; i<7 ; i++) {
+  //     d[i] = (d[i] << 8) | (d[i] >> 8);
+  //   }
+
+  //   // UART0_Print("what");
+
+  //   char msg[128];
+  //   sprintf(msg,
+  //           "AX:%6d AY:%6d AZ:%6d | GX:%6d GY:%6d GZ:%6d\r\n",
+  //           d[0], d[1], d[2],
+  //           d[4], d[5], d[6]);
+  //   // UART0_Print("goddamn it");
+
+  //   UART0_Print(msg);
+
+
+
+
+  //   delay_ms(1000);
+
+
+
+  // }
+  while(1) {
+    GPIO_PORTF_DATA_R = 0x02;
+    delay_ms(500);
+    GPIO_PORTF_DATA_R = 0x04;
+    delay_ms(500);
+    GPIO_PORTF_DATA_R = 0x08;
+    delay_ms(500);
+
+
+
+
+
   }
-    GPIO_PORTF_DATA_R = 0x0;   // write value to PORTF DATA register,toggle led
 
 }
 
-// Color    LED(s) PortF
-// dark     ---    0
-// red      R--    0x02
-// blue     --B    0x04
-// green    -G-    0x08
-// yellow   RG-    0x0A
-// sky blue -GB    0x0C
-// white    RGB    0x0E
-// pink     R-B    0x06

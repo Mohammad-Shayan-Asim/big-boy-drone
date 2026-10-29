@@ -42,7 +42,8 @@ LD_SCRIPT = ld/$(MCU).ld
 
 #UTILITY VARIABLES
 CC = arm-none-eabi-gcc #compiler
-LD = arm-none-eabi-ld #linker
+# LD = arm-none-eabi-ld #linker
+LD = arm-none-eabi-gcc #linker
 OBJCOPY = arm-none-eabi-objcopy #final executable builder
 FLASHER = lm4flash #flashing utility
 RM      = rm -rf
@@ -50,11 +51,12 @@ MKDIR   = @mkdir -p $(@D) #creates folders if not present
 
 
 #GCC FLAGS
-CFLAGS = -ggdb -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 
-CFLAGS += -mfloat-abi=softfp -Os -MD -std=c99 -c    
+CFLAGS = -ggdb -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp
+CFLAGS +=  -Os -MD -std=c99 -c   
 
 #LINKER FLAGS
-LDFLAGS = -T $(LD_SCRIPT) -e Reset_Handler 
+LDFLAGS = -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp
+LDFLAGS += -T $(LD_SCRIPT) -e Reset_Handler --specs=nosys.specs  --specs=nano.specs
 
 
 

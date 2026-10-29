@@ -1,0 +1,47 @@
+#ifndef __MPU6500_H__
+#define __MPU6500_H__
+#include "stdint.h"
+#include "tm4c123gh6pm.h"
+
+#define MPU_ADDR_ADC0 0x68
+#define MPU_REG_PWR_MGMT_1 0x6B
+#define DEVICE_RESET (1<<7)
+
+#define MPU_REG_ACCEL_XOUT_H 59
+#define MPU_REG_ACCEL_XOUT_L 60
+#define MPU_REG_ACCEL_YOUT_H 61
+#define MPU_REG_ACCEL_YOUT_L 62
+#define MPU_REG_ACCEL_ZOUT_H 63
+#define MPU_REG_ACCEL_ZOUT_L 64
+
+#define MPU_REG_TEMP_XOUT_H 67
+#define MPU_REG_TEMP_XOUT_L 67
+
+#define MPU_REG_GYRO_XOUT_H 67
+#define MPU_REG_GYRO_XOUT_L 60
+#define MPU_REG_GYRO_YOUT_H 61
+#define MPU_REG_GYRO_YOUT_L 62
+#define MPU_REG_GYRO_ZOUT_H 63
+#define MPU_REG_GYRO_ZOUT_L 64
+
+#define MPU_REG_WHO_AM_I 117
+
+#define MPU6500_REG_GYRO_CONFIG 27
+#define MPU6500_REG_ACCEL_CONFIG 28
+
+#define  MPU6500_GYROSCOPE_RANGE_250DPS   0x00       
+#define  MPU6500_GYROSCOPE_RANGE_500DPS   0x01       
+#define  MPU6500_GYROSCOPE_RANGE_1000DPS  0x02        
+#define  MPU6500_GYROSCOPE_RANGE_2000DPS  0x03     
+
+#define MPU6500_ACCELEROMETER_RANGE_4G   0x01        
+#define MPU6500_ACCELEROMETER_RANGE_2G   0x00         
+#define MPU6500_ACCELEROMETER_RANGE_8G   0x02        
+#define MPU6500_ACCELEROMETER_RANGE_16G  0x03        
+
+
+
+int MPU6500_Init();
+int MPU6500_Read(uint8_t* buffer);
+
+#endif

@@ -66,7 +66,7 @@ SECTIONS
         *(COMMON)       
         _ebss = .;      /* end of .bss segment */
     } > RAM
-
-
-
+    end = _ebss;
+    __bss_end__ = _ebss;
+    __bss_start__ = _bss;
 }
