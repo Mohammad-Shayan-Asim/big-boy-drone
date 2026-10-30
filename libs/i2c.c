@@ -29,7 +29,7 @@ int I2C_Init() {
 
   // Poll until writes have taken place
   while (~SYSCTL_PRI2C_R & SYSCTL_PRI2C_R0) {}
-  while(~SYSCTL_PRGPIO_R & SYSCTL_RCGCGPIO_R1){};
+  while(~SYSCTL_PRGPIO_R & SYSCTL_PRGPIO_R1){};
 
   // enable PB2 and PB3
   GPIO_PORTB_DEN_R |= 0xC; 
