@@ -2,14 +2,19 @@
 #include "tm4c123gh6pm.h"
 #include "uart.h"
 #include "i2c.h"
-#include "stdio.h"
 #include "mpu6500.h"
 #include "delay.h"
+#include "pwm.h"
 #include "stdio.h"
 
 #define PORT_F 0x20
 
-unsigned long Led;
+enum Lights {
+  none = 0x00,
+  red = 0x02,
+  blue = 0x04,
+  green = 0x08,
+};
 
 void PortF_Init() {
   SYSCTL_RCGCGPIO_R |= PORT_F;
@@ -27,77 +32,66 @@ void FP_Disable() {
   NVIC_CPAC_R &= ~0x00F00000;
 }
 
+void ToggleLed(enum Lights Led) {
+  GPIO_PORTF_DATA_R = Led;
+}
+
 int main(void){
   PortF_Init();
   UART0_Init();
 
-  if (I2C_Init() < 0) {
-    UART0_Print("I2C initialization failed!\r\n");
-    return -1;
-  }
-
-
-  if (MPU6500_Init() < 0) {
-    UART0_Print("MPU6500 initialization failed!\r\n");
-    return -1;
-  }
-
-
-  // if (PWM0_Init() < 0) {
-  //   UART0_Print("PWM0 initialization failed!\r\n");
+  // if (I2C_Init() < 0) {
+  //   UART0_Print("I2C initialization failed!\r\n");
   //   return -1;
   // }
 
-  UART0_Print("initialization successful!\r\n");
 
-
-  while(1){
-    uint16_t d[7];
-    if (MPU6500_Read((uint8_t*)d) < 0) {
-      UART0_Print("MPU6500 read failed!\r\n");
-      return -1;
-    }
-    
-
-    for(int i=0; i<7 ; i++) {
-      d[i] = (d[i] << 8) | (d[i] >> 8);
-    }
-
-    // UART0_Print("what");
-
-    int16_t* cast = (int16_t*)d;
-
-    char msg[128];
-    sprintf(msg,
-            "%i, %i, %i, %i, %i, %i, %i\r\n",
-            cast[0], cast[1], cast[2],
-            cast[3], cast[4], cast[5], 
-            cast[6]);
-   
-
-    UART0_Print(msg);
-
-
-
-
-    delay_ms(20);
-
-
-
-  }
-  // while(1) {
-  //   GPIO_PORTF_DATA_R = 0x02;
-  //   delay_ms(500);
-  //   GPIO_PORTF_DATA_R = 0x04;
-  //   delay_ms(500);
-  //   GPIO_PORTF_DATA_R = 0x08;
-  //   delay_ms(500);
-
-
-
-
-
+  // if (MPU6500_Init() < 0) {
+  //   UART0_Print("MPU6500 initialization failed!\r\n");
+  //   return -1;
   // }
 
+
+  if (PWM0_Init() < 0) {
+    // UART0_Print("PWM0 initialization failed!\r\n");
+    ToggleLed(red);
+    return -1;
+  }
+
+
+  // UART0_Print("initialization successful!\r\n");
+  ToggleLed(green);
+  delay_ms(1000);
+  ToggleLed(none);
+
+
+  PWM0_WritePPMWidth(PPM_MIN);
+  PWM0_StartOutput();
+
+  ToggleLed(blue);
+  delay_ms(5000);
+
+
+  ToggleLed(green);
+
+
+
+  for (uint16_t w = 1000; w <= 1500; w += 10) {
+      PWM0_WritePPMWidth(w);              
+      delay_ms(50);
+  }
+
+  delay_ms(5000);   
+  
+  for (uint16_t w = 1500; w > 1000; w -= 10) {
+      PWM0_WritePPMWidth(w);              
+      delay_ms(50);
+  }
+
+  // PWM0_WritePPMWidth(PPM_MIN);
+  ToggleLed(none);
+
+
+  while(1){}
 }
 

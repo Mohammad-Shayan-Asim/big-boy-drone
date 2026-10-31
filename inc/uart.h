@@ -4,7 +4,7 @@
 #include "tm4c123gh6pm.h"
 
 void UART0_Init(void);
-void UART0_PutChar(char c);
+void UART0_PutByte(char c);
 void UART0_Print(const char *s);
 
 #endif

@@ -4,6 +4,7 @@
 //width is in microseconds
 void PWM0_WritePPMWidth(uint16_t width) {
     PWM0_0_CMPA_R = PWM0_0_LOAD_R * (2500 - width) / 2500;
+    // PWM0_0_CMPA_R = PWM0_0_LOAD_R * (20000 - width) / 20000;
 }
 
 int PWM0_Init() {
@@ -15,17 +16,21 @@ int PWM0_Init() {
   while (~SYSCTL_PRPWM_R & SYSCTL_PRPWM_R0) {}
   while(~SYSCTL_PRGPIO_R & SYSCTL_PRGPIO_R1){};
 
-  // enable PB6
-  GPIO_PORTB_DEN_R |= 1<<6; 
+  // enable PB6, and drive it low intially
+  GPIO_PORTB_DEN_R |= 1<<6;
 
   // enable alternate functionality for PB6 
   GPIO_PORTB_AFSEL_R |= 1<<6; 
+
+  // enable it to have higher current
+  GPIO_PORTB_DR4R_R |= 0x40;
+
 
   // set alternate functionality as M0PWM0 
   GPIO_PORTB_PCTL_R = (GPIO_PORTB_PCTL_R & 0xF0FFFFFF) | 0x04000000;
 
   // use PWMDIV with RCC_PWMDIV_8
-//   SYSCTL_RCC_R = (~SYSCTL_RCC_PWMDIV_M & SYSCTL_RCC_R) | SYSCTL_RCC_PWMDIV_8 | SYSCTL_RCC_USEPWMDIV;
+  // SYSCTL_RCC_R = (~SYSCTL_RCC_PWMDIV_M & SYSCTL_RCC_R) | SYSCTL_RCC_PWMDIV_8 | SYSCTL_RCC_USEPWMDIV;// turning this one boosts the signal to 20 ms cycle
   SYSCTL_RCC_R &= ~SYSCTL_RCC_USEPWMDIV; 
 
   // disable PWM0 generator 0 and set countdown mode
@@ -43,10 +48,10 @@ int PWM0_Init() {
   PWM0_0_CTL_R |= PWM_0_CTL_ENABLE;
 
   // disable pwm outputs for M0PWM0
-  PWM0_ENABLE_R &= 0x01;
+  PWM0_ENABLE_R &= ~0x01;
   return 0;
 }
 
-void PWM0_StartOutput(void) {
+void PWM0_StartOutput() {
     PWM0_ENABLE_R |= 0x01;
 }
