@@ -40,6 +40,15 @@ int main(void){
   PortF_Init();
   UART0_Init();
 
+
+  GPIO_PORTF_DEN_R |= 1<<4;
+  GPIO_PORTF_DIR_R &= ~(1<<4);
+  GPIO_PORTF_PUR_R |= 1<<4;
+  GPIO_PORTF_DATA_R = 1<<4;
+
+ 
+
+
   // if (I2C_Init() < 0) {
   //   UART0_Print("I2C initialization failed!\r\n");
   //   return -1;
@@ -59,38 +68,21 @@ int main(void){
   }
 
 
-  // UART0_Print("initialization successful!\r\n");
-  ToggleLed(green);
-  delay_ms(1000);
-  ToggleLed(none);
-
-
   PWM0_WritePPMWidth(PPM_MIN);
   PWM0_StartOutput();
-
   ToggleLed(blue);
-  delay_ms(5000);
-
+  delay_ms(3000);
 
   ToggleLed(green);
 
+  int throttle_ps = 50;
+  int throttle_pulse = PPM_MIN + throttle_ps * 10;
 
-
-  for (uint16_t w = 1000; w <= 1500; w += 10) {
-      PWM0_WritePPMWidth(w);              
-      delay_ms(50);
-  }
-
-  delay_ms(5000);   
+  PWM0_WritePPMWidth(throttle_pulse);              
   
-  for (uint16_t w = 1500; w > 1000; w -= 10) {
-      PWM0_WritePPMWidth(w);              
-      delay_ms(50);
-  }
-
-  // PWM0_WritePPMWidth(PPM_MIN);
+  delay_ms(3000);   
+  PWM0_WritePPMWidth(PPM_MIN);              
   ToggleLed(none);
-
 
   while(1){}
 }

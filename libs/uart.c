@@ -60,7 +60,6 @@ void ESP_FlashMode() {
 
   // creates a bidirectional UART transfer bridge for code flashing
   for(;;) {
-
     if(!(UART0_FR_R & UART_FR_RXFE) && !(UART1_FR_R & UART_FR_TXFF)){
       UART1_DR_R = UART0_DR_R;
     }
