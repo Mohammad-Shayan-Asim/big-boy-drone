@@ -41,10 +41,10 @@ int main(void){
   UART0_Init();
 
 
-  GPIO_PORTF_DEN_R |= 1<<4;
-  GPIO_PORTF_DIR_R &= ~(1<<4);
-  GPIO_PORTF_PUR_R |= 1<<4;
-  GPIO_PORTF_DATA_R = 1<<4;
+  // GPIO_PORTF_DEN_R |= 1<<4;
+  // GPIO_PORTF_DIR_R &= ~(1<<4);
+  // GPIO_PORTF_PUR_R |= 1<<4;
+  // GPIO_PORTF_DATA_R = 1<<4;
 
  
 
@@ -61,28 +61,11 @@ int main(void){
   // }
 
 
-  if (PWM0_Init() < 0) {
+  if (initPPM() < 0) {
     // UART0_Print("PWM0 initialization failed!\r\n");
     ToggleLed(red);
     return -1;
   }
-
-
-  PWM0_WritePPMWidth(PPM_MIN);
-  PWM0_StartOutput();
-  ToggleLed(blue);
-  delay_ms(3000);
-
-  ToggleLed(green);
-
-  int throttle_ps = 50;
-  int throttle_pulse = PPM_MIN + throttle_ps * 10;
-
-  PWM0_WritePPMWidth(throttle_pulse);              
-  
-  delay_ms(3000);   
-  PWM0_WritePPMWidth(PPM_MIN);              
-  ToggleLed(none);
 
   while(1){}
 }
