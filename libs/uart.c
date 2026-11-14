@@ -1,6 +1,5 @@
 #include "uart.h"
 
-
 void UART0_Init(void) {
   SYSCTL_RCGCUART_R |= SYSCTL_RCGCUART_R0;
   SYSCTL_RCGCGPIO_R |= SYSCTL_RCGCGPIO_R0;
@@ -42,6 +41,12 @@ void UART1_Init(void) {
   UART1_LCRH_R = UART_LCRH_WLEN_8 | UART_LCRH_FEN;          
   UART1_CTL_R = UART_CTL_UARTEN | UART_CTL_TXE | UART_CTL_RXE;
 
+  // set the UART1 Receive Interrupt Mask
+  UART1_IM_R |= 0x10; 
+
+  // set the UART1 in NVIC Interrupt Set Enable 
+  NVIC_EN0_R |= 1 << NVIC_UART1;
+  
   // PB0 (RX), PB1 (TX)
   GPIO_PORTB_AFSEL_R |= 0x03;               
   GPIO_PORTB_DEN_R   |= 0x03;
@@ -49,26 +54,39 @@ void UART1_Init(void) {
   GPIO_PORTB_PCTL_R = (GPIO_PORTB_PCTL_R & 0xFFFFFF00) | 0x00000011;
 }
 
-void ESP_FlashMode() {
-  // this is connected to the pc
-  UART0_Init();
 
-  // this is connected to the ESP module
-  UART1_Init();
-
-  uint8_t byte;
-
-  // creates a bidirectional UART transfer bridge for code flashing
-  for(;;) {
-    if(!(UART0_FR_R & UART_FR_RXFE) && !(UART1_FR_R & UART_FR_TXFF)){
-      UART1_DR_R = UART0_DR_R;
-    }
-    
-    if(!(UART1_FR_R & UART_FR_RXFE) && !(UART0_FR_R & UART_FR_TXFF)){
-      UART0_DR_R = UART1_DR_R;
-    }
+void UART1_Read(uint8_t* bytes, int n) {
+  for(int i=0; i < n; i++){
+    while (UART1_FR_R & UART_FR_RXFE){}
+    bytes[i] = UART1_DR_R;
   }
+  return bytes;
 }
+
+void UART1_RX_Clear() {
+  UART1_ICR_R |= 0x10; 
+}
+
+// void ESP_FlashMode() {
+//   // this is connected to the pc
+//   UART0_Init();
+
+//   // this is connected to the ESP module
+//   UART1_Init();
+
+//   uint8_t byte;
+
+//   // creates a bidirectional UART transfer bridge for code flashing
+//   for(;;) {
+//     if(!(UART0_FR_R & UART_FR_RXFE) && !(UART1_FR_R & UART_FR_TXFF)){
+//       UART1_DR_R = UART0_DR_R;
+//     }
+    
+//     if(!(UART1_FR_R & UART_FR_RXFE) && !(UART0_FR_R & UART_FR_TXFF)){
+//       UART0_DR_R = UART1_DR_R;
+//     }
+//   }
+// }
 
 void UART0_PutByte(char c) {
   while (UART0_FR_R & UART_FR_TXFF) {}      // wait while transmit FIFO is full

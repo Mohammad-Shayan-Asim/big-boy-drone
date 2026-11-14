@@ -40,6 +40,52 @@ int main(void){
   PortF_Init();
   UART0_Init();
 
+  FP_Enable();
+
+  if (initPPM() < 0) {
+    ToggleLed(red);
+    return -1;
+  }
+  ToggleLed(blue);
+
+  // float values[] = {30.0f, 0.0f, 0.0f, 0.0f};   
+  // writePPMAllOff();
+  // delay_ms(3000);
+
+  // updateMotorsAll(values);
+
+
+
+  // float values[] = {100.0f, 0.0f, 0.0f, 0.0f};   
+  // updateMotorsAll(values);
+
+
+  // writePPMAllOff();
+
+  // delay_ms(3000);      
+  // GPIO_PORTF_DEN_R |=  0x10;    
+  // GPIO_PORTF_DIR_R &= ~0x10;                 
+  // GPIO_PORTF_PUR_R |=  0x10;               
+  // GPIO_PORTF_DATA_R |= 0x10;      
+  // updateMotorsAll(values);
+
+ 
+  // while ((GPIO_PORTF_DATA_R & 0x10)) { }
+
+  // ToggleLed(red);
+  // values[0] = 0.0f;
+  // updateMotorsAll(values);
+  
+
+  // delay_ms(2000);
+  // ToggleLed(blue);
+  // writePPMAllOff();
+
+  while(1) {
+
+  }
+
+
 
   // GPIO_PORTF_DEN_R |= 1<<4;
   // GPIO_PORTF_DIR_R &= ~(1<<4);
@@ -67,6 +113,6 @@ int main(void){
     return -1;
   }
 
-  while(1){}
+
 }
 

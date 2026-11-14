@@ -30,7 +30,7 @@
 
 __attribute__((section(".vector_table"))) //marks this vector table as a part of the section "".vector_table"
 //in the linker script
-const vector_table_t vectors[] = {
+vector_table_t vectors[] = {
     {.stack_top = &_stack_ptr}, // 0    Pointer to top of Stack
     Reset_Handler,              // 1    Reset handler is called when the <RESET> button is pressed
     NMI_Handler,                // 2    Non-Maskable Interrupt handler
@@ -186,6 +186,10 @@ const vector_table_t vectors[] = {
     PWM1Generator3_ISR,
     PWM1Fault_ISR,
 };
+
+void _register_interrupt(int i, element_t isr) {
+  vectors[i] = (vector_table_t)isr;
+}
 
 // +-----------------------------------------------------------------------------------+
 // +                Implementations of Interrupt Service Routines                      +
