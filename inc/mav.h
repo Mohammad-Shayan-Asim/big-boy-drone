@@ -4,7 +4,7 @@
 #include "tm4c123gh6pm.h"
 #include "uart.h"
 #include "mavlink.h"
-#include "startup.h"
+// #include "startup.h"
 
 
 
@@ -36,32 +36,15 @@
 // PARAM_REQUEST_LIST (21)
 // https://mavlink.io/en/services/parameter.html
 
+#define QUEUE_SIZE 32
 
-int Mavlink_Init() {
-    _register_interrupt(NVIC_UART1, Mavlink_Parse);
-    return 0;
-}
 
-void Mavlink_Parse() {
-    uint8_t magic;
-    UART1_Read(&magic, 1);
-    if (magic != MAVLINK_STX_MAVLINK1) {
-        return;
-    }
+void mavlink_queue_append(const mavlink_message_t* msg);
+void mavlink_pop_queue();
 
-    uint8_t len;
-    UART1_Read(&len, 1);
-    
-    uint8_t packet[512];
-    memset(packet, NULL, 512);
-    UART1_Read(packet, len); 
-
-    uint32_t msg_id = packet[7] | packet[8] | packet[9];
-
-    switch (msg_id) {
-        case MAVLINK_MSG_ID_HEARTBEAT:
-            UART0_Print("heartbeat received!\n");
-    }
-}
+void mavlink_send_message(const mavlink_message_t* msg);
+void mavlink_parse();
+// void UART1_ISR();
+void mavlink_heartbeat_append();
 
 #endif

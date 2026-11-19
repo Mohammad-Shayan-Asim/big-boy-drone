@@ -147,7 +147,6 @@ DEFAULT void PWM1Generator2_ISR(void);
 DEFAULT void PWM1Generator3_ISR(void);
 DEFAULT void PWM1Fault_ISR(void);
 
-void _register_interrupt(int i, element_t isr) 
 
 // +-----------------------------------------------------------------------------------+
 // +					External Variables declaration					               +

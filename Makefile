@@ -34,7 +34,7 @@ OBJ = obj/
 OBJS = $(addprefix $(OBJ),$(notdir $(SRCS:.c=.o)))
 
 #Flag points to the INC folder containing header files
-INC = -Iinc
+INC = -Iinc -Iinc/c_library_v2/all	
 
 # LD_SCRIPT: linker script
 LD_SCRIPT = ld/$(MCU).ld

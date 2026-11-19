@@ -6,6 +6,7 @@
 #include "delay.h"
 #include "pwm.h"
 #include "stdio.h"
+#include "mav.h"
 
 #define PORT_F 0x20
 
@@ -39,14 +40,35 @@ void ToggleLed(enum Lights Led) {
 int main(void){
   PortF_Init();
   UART0_Init();
+  UART1_Init();
 
-  FP_Enable();
 
-  if (initPPM() < 0) {
-    ToggleLed(red);
-    return -1;
+
+  UART0_Print("tiva c launchpad says hello!\r\n");
+
+  int ticks = 0;
+  for(;;){
+    delay_ms(10);
+    if(++ticks>=100){
+      ticks=0;
+      mavlink_heartbeat_append();
+    }
+
+    mavlink_pop_queue();
+    // UART0_Print("heartbeat sent\r\n");
   }
-  ToggleLed(blue);
+
+
+
+ 
+
+  // FP_Enable();
+
+  // if (initPPM() < 0) {
+  //   ToggleLed(red);
+  //   return -1;
+  // }
+  // ToggleLed(blue);
 
   // float values[] = {30.0f, 0.0f, 0.0f, 0.0f};   
   // writePPMAllOff();

@@ -41,8 +41,8 @@ void UART1_Init(void) {
   UART1_LCRH_R = UART_LCRH_WLEN_8 | UART_LCRH_FEN;          
   UART1_CTL_R = UART_CTL_UARTEN | UART_CTL_TXE | UART_CTL_RXE;
 
-  // set the UART1 Receive Interrupt Mask
-  UART1_IM_R |= 0x10; 
+  // set the UART1 Receive Interrupt Mask and Receive Timeout Mask
+  UART1_IM_R |= 0x50; 
 
   // set the UART1 in NVIC Interrupt Set Enable 
   NVIC_EN0_R |= 1 << NVIC_UART1;
@@ -55,38 +55,23 @@ void UART1_Init(void) {
 }
 
 
-void UART1_Read(uint8_t* bytes, int n) {
-  for(int i=0; i < n; i++){
-    while (UART1_FR_R & UART_FR_RXFE){}
-    bytes[i] = UART1_DR_R;
-  }
-  return bytes;
+void UART1_PutByte(char c) {
+  while (UART1_FR_R & UART_FR_TXFF) {}      // wait while transmit FIFO is full
+  UART1_DR_R = c;
 }
+
+int UART1_ReadByte(uint8_t* byte) {
+  if (UART1_FR_R & UART_FR_RXFE) {
+    return -1;
+  }      
+  *byte = (uint8_t)UART1_DR_R;
+  return 0;
+}
+
 
 void UART1_RX_Clear() {
-  UART1_ICR_R |= 0x10; 
+  UART1_ICR_R |= 0x50; 
 }
-
-// void ESP_FlashMode() {
-//   // this is connected to the pc
-//   UART0_Init();
-
-//   // this is connected to the ESP module
-//   UART1_Init();
-
-//   uint8_t byte;
-
-//   // creates a bidirectional UART transfer bridge for code flashing
-//   for(;;) {
-//     if(!(UART0_FR_R & UART_FR_RXFE) && !(UART1_FR_R & UART_FR_TXFF)){
-//       UART1_DR_R = UART0_DR_R;
-//     }
-    
-//     if(!(UART1_FR_R & UART_FR_RXFE) && !(UART0_FR_R & UART_FR_TXFF)){
-//       UART0_DR_R = UART1_DR_R;
-//     }
-//   }
-// }
 
 void UART0_PutByte(char c) {
   while (UART0_FR_R & UART_FR_TXFF) {}      // wait while transmit FIFO is full

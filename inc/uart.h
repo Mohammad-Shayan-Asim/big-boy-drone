@@ -10,7 +10,8 @@ void UART0_PutByte(char c);
 void UART0_Print(const char *s);
 
 void UART1_Init(void);
-void UART1_Read(uint8_t* bytes, int n);
+int UART1_ReadByte(uint8_t* byte);
+void UART1_PutByte(char c);
 void UART1_RX_Clear();
 
 #endif
