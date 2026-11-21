@@ -42,12 +42,9 @@ void mavlink_parse() {
         static mavlink_message_t msg;
         static mavlink_status_t status;
 
-        // UART0_Print("message\r\n");
-
         if (mavlink_parse_char(MAVLINK_COMM_0, byte, &msg, &status)) {
             switch (msg.msgid) {
             case MAVLINK_MSG_ID_PARAM_REQUEST_LIST: {
-                // UART0_Print("Received Param Request List message\r\n");
                 mavlink_message_t response_msg;
                 mavlink_msg_param_value_pack(system_id, component_id, &response_msg, "param", 0.0, MAV_PARAM_TYPE_REAL32, 1, 0);
                 mavlink_queue_append(&response_msg);

@@ -44,7 +44,7 @@ int I2C_Init() {
   GPIO_PORTB_ODR_R |= 0x08; 
 
   // represents the number of system clock periods in one SCL clock period
-  I2C0_MTPR_R = 7; 
+  I2C0_MTPR_R = 1; 
   
   // enable master mode, disable slave mode
   I2C0_MCR_R = 0x10; 

@@ -28,6 +28,7 @@
 
 #define MPU6500_REG_GYRO_CONFIG 27
 #define MPU6500_REG_ACCEL_CONFIG 28
+#define MPU6500_REG_ACCEL_CONFIG2   0x1D
 
 #define  MPU6500_GYROSCOPE_RANGE_250DPS   0x00       
 #define  MPU6500_GYROSCOPE_RANGE_500DPS   0x01       
@@ -38,10 +39,25 @@
 #define MPU6500_ACCELEROMETER_RANGE_2G   0x00         
 #define MPU6500_ACCELEROMETER_RANGE_8G   0x02        
 #define MPU6500_ACCELEROMETER_RANGE_16G  0x03        
+#define MPU6500_REG_INT_PIN_CFG     0x37
+#define MPU6500_REG_INT_ENABLE      0x38
+#define MPU6500_REG_SMPLRT_DIV      0x19
+#define MPU6500_REG_CONFIG          0x1A
+#define MPU6500_GYRO_LSB_PER_DPS    16.4f
+#define MPU6500_ACC_LSB_PER_G       4096.0f
 
 
-
-int MPU6500_Init();
-int MPU6500_Read(uint8_t* buffer);
+int  MPU6500_Init(void);            // reset, wake, check WHO_AM_I
+int  MPU6500_GyroConfig(void);      // +-2000 dps
+int  MPU6500_AccelConfig(void);     // +-8 g
+int  MPU6500_SampleConfig(void);    // 1 kHz, DLPF ~41 Hz
+int  MPU6500_IntConfig(void);       // INT pin: active high, latched, data ready
+void MPU6500_IntPinInit(void);      // PE2 as input
+int  MPU6500_Setup(void);           // runs everything above in order
+int  MPU6500_DataReady(void);       // 1 when INT (PE2) is high
+int  MPU6500_Read(uint8_t *buffer); // 14 raw bytes
+void MPU6500_Parse(const uint8_t *b, raw_sensor_t *r);
+int  MPU6500_CalibrateGyro(void);   // board must be still
+int  MPU6500_GetData(sensor_t *d); // read + offset + scale
 
 #endif
