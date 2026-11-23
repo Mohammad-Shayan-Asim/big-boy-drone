@@ -13,6 +13,7 @@ void delay_ms(uint32_t ms) {
     // wait until count flag is set
     while(ms--){
         while((NVIC_ST_CTRL_R & (1<<16)) == 0){}
+        
     }
 
     // stop systick

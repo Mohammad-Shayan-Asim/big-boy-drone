@@ -1,4 +1,7 @@
 #include "mav.h"
+#include "types.h"
+
+extern  uint32_t time_since_boot;
 
 static const uint32_t system_id = 1;
 static const uint8_t component_id = 1;
@@ -72,7 +75,7 @@ void mavlink_parse() {
                 mavlink_queue_append(&mission_count);
                 break;
             }
-                
+        
             default:
                 break;
             }
@@ -88,5 +91,11 @@ void UART1_ISR() {
 void mavlink_heartbeat_append() {
     mavlink_message_t msg;
     mavlink_msg_heartbeat_pack(system_id, component_id, &msg, MAV_TYPE_QUADROTOR, MAV_AUTOPILOT_GENERIC, MAV_MODE_AUTO_DISARMED, 0, MAV_STATE_ACTIVE);
+    mavlink_queue_append(&msg);
+}
+
+void mavlink_attitude_send(angle_t* angle, sensor_t* ag) {
+    mavlink_message_t msg;
+    mavlink_msg_attitude_pack(system_id, component_id, &msg, time_since_boot, angle->X, angle->Y, angle->Z, ag->gx, ag->gy, ag->gz);
     mavlink_queue_append(&msg);
 }

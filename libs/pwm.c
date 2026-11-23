@@ -8,6 +8,11 @@ void WritePPMWidth(int motor, uint16_t width) {
     volatile uint32_t* cmp = motor == 0? &PWM0_0_CMPA_R : motor == 1? &PWM0_0_CMPB_R: motor == 2? &PWM0_1_CMPA_R : &PWM0_1_CMPB_R;
     uint32_t  load = motor <= 1? PWM0_0_LOAD_R: PWM0_1_LOAD_R;
 
+    if (motor==0) {
+        cmp = &PWM0_3_CMPA_R;
+        load = PWM0_3_LOAD_R;
+    }
+
     *cmp = load * (2500 - width) / 2500;
 }
 
@@ -40,6 +45,30 @@ int initPPM(void) {
   PWM0_1_CTL_R |= PWM_1_CTL_ENABLE;
 
   PWM0_ENABLE_R |= 0x0F;
+
+  SYSCTL_RCGCGPIO_R |= SYSCTL_RCGCGPIO_R2;
+
+  while(~SYSCTL_PRGPIO_R & SYSCTL_PRGPIO_R2){};
+
+  GPIO_PORTC_DEN_R |= 0x10;
+  GPIO_PORTC_AFSEL_R |= 0x10; 
+  GPIO_PORTC_DR4R_R |= 0x10;
+
+  GPIO_PORTC_PCTL_R = (GPIO_PORTC_PCTL_R & 0xFFF0FFFF) | 0x00040000;
+
+
+  PWM0_3_CTL_R = 0x0;
+
+  PWM0_3_GENA_R = PWM_0_GENA_ACTLOAD_ONE | PWM_0_GENA_ACTCMPAD_ZERO;
+
+  PWM0_3_LOAD_R = PWM0_1_LOAD_R = 39999; 
+
+  writePPMAllOff();
+
+  PWM0_3_CTL_R |= PWM_0_CTL_ENABLE;
+
+  PWM0_ENABLE_R |= 0x40;
+
   return 1;
 }
 

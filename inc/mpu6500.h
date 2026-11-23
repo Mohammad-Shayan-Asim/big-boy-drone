@@ -2,6 +2,8 @@
 #define __MPU6500_H__
 #include "stdint.h"
 #include "tm4c123gh6pm.h"
+#include "types.h"
+
 
 #define MPU_ADDR_ADC0 0x68
 #define MPU_REG_PWR_MGMT_1 0x6B
@@ -56,8 +58,8 @@ void MPU6500_IntPinInit(void);      // PE2 as input
 int  MPU6500_Setup(void);           // runs everything above in order
 int  MPU6500_DataReady(void);       // 1 when INT (PE2) is high
 int  MPU6500_Read(uint8_t *buffer); // 14 raw bytes
-void MPU6500_Parse(const uint8_t *b, raw_sensor_t *r);
-int  MPU6500_CalibrateGyro(void);   // board must be still
+void MPU6500_Parse(uint8_t *b, raw_sensor_t *r);
+int  calibrateSensor(int16_t maxDifferenceGyro, int16_t maxDifferenceAcc);
 int  MPU6500_GetData(sensor_t *d); // read + offset + scale
 
 #endif

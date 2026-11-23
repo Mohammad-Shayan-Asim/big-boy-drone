@@ -4,12 +4,14 @@
 typedef struct {
     float ax, ay, az;
     float gx, gy, gz;
-} sensor_t, raw_sensor_t;
+    // float te;
+} sensor_t;
 
 typedef struct {
     int16_t ax, ay, az;
     int16_t gx, gy, gz;
-}sensor_offset_t;
+    // int16_t te;
+}sensor_offset_t, raw_sensor_t;;
 
 typedef struct {
     float X, Y, Z;

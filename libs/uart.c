@@ -33,13 +33,20 @@ void UART1_Init(void) {
   // disable while configuring
   UART1_CTL_R = 0;                 
   
-  // 115200 baud at 16 MHz
-  UART1_IBRD_R = 8;                        
-  UART1_FBRD_R = 44;
+  // // 115200 baud at 16 MHz
+  // UART1_IBRD_R = 8;                        
+  // UART1_FBRD_R = 44;
+
+  // 2Mbps baud at 16 MHz
+  UART1_IBRD_R = 1;                        
+  UART1_FBRD_R = 0;
+
 
   // 8 data bits, no parity, 1 stop
   UART1_LCRH_R = UART_LCRH_WLEN_8 | UART_LCRH_FEN;          
-  UART1_CTL_R = UART_CTL_UARTEN | UART_CTL_TXE | UART_CTL_RXE;
+  // UART1_CTL_R = UART_CTL_UARTEN | UART_CTL_TXE | UART_CTL_RXE;
+  UART1_CTL_R = UART_CTL_UARTEN | UART_CTL_TXE | UART_CTL_RXE | UART_CTL_HSE;
+
 
   // set the UART1 Receive Interrupt Mask and Receive Timeout Mask
   UART1_IM_R |= 0x50; 

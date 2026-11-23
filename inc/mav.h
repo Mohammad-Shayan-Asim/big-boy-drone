@@ -4,6 +4,7 @@
 #include "tm4c123gh6pm.h"
 #include "uart.h"
 #include "mavlink.h"
+#include "types.h"
 // #include "startup.h"
 
 
@@ -46,5 +47,6 @@ void mavlink_send_message(const mavlink_message_t* msg);
 void mavlink_parse();
 // void UART1_ISR();
 void mavlink_heartbeat_append();
+void mavlink_attitude_send(angle_t* angle, sensor_t* ag);
 
 #endif

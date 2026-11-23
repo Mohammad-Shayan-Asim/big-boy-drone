@@ -37,7 +37,7 @@ OBJS = $(addprefix $(OBJ),$(notdir $(SRCS:.c=.o)))
 INC = -Iinc -Iinc/c_library_v2/all	
 
 # LD_SCRIPT: linker script
-LD_SCRIPT = ld/$(MCU).ld
+LD_SCRIPT = ld/$(MCU).ld 
 
 
 #UTILITY VARIABLES
@@ -55,7 +55,7 @@ CFLAGS = -ggdb -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp
 CFLAGS +=  -Os -MD -std=c99 -c   
 
 #LINKER FLAGS
-LDFLAGS = -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp
+LDFLAGS = -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -lm
 LDFLAGS += -T $(LD_SCRIPT) -e Reset_Handler --specs=nosys.specs  --specs=nano.specs
 
 
